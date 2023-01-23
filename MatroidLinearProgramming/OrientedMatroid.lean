@@ -53,6 +53,12 @@ instance : LinearOrder WithZeroSign :=
   le_total := by decide
   decidable_le := by infer_instance }
 
+instance : ZeroLEOneClass WithZeroSign :=
+  ⟨by decide⟩
+
+instance : NeZero (1 : WithZeroSign) :=
+  ⟨by decide⟩
+
 open Matroid
 
 @[ext] structure SignedSet (E : Type _) :=
@@ -85,13 +91,13 @@ def neg (c : SignedSet E) : Set E :=
 
 end SignedSet
 
-class OrientedMatroid (E : Type _) :=
-  ( circuits : Set (SignedSet E) )
-  ( empty_not_mem : ∅ ∉ circuits )
-  ( neg_mem : ∀ c, c ∈ circuits → -c ∈ circuits )
-  ( subset : ∀ c₁ ∈ circuits, ∀ c₂ ∈ circuits, c₁.toSet ⊆ c₂.toSet →
+class OrientedMatroid (E : Type _) extends Matroid E :=
+  ( signedCircuits' : Set (SignedSet E) )
+  ( circuits_eq_signedCircuits : ((↑) : SignedSet E → Set E) ⁻¹' circuits' = signedCircuits' )
+  ( neg_mem : ∀ c, c ∈ signedCircuits' → -c ∈ signedCircuits' )
+  ( subset : ∀ c₁ ∈ signedCircuits', ∀ c₂ ∈ signedCircuits', (c₁ : Set E) ⊆ c₂ →
     c₁ = c₂ ∨ c₁ = -c₂ )
-  ( eliminate : ∀ c₁ ∈ circuits, ∀ c₂ ∈ circuits, c₁ ≠ -c₂ →
-      ∀ e ∈ c₁.pos ∩ c₂.neg, ∃ c₃ ∈ circuits,
+  ( eliminate : ∀ c₁ ∈ signedCircuits', ∀ c₂ ∈ signedCircuits', c₁ ≠ -c₂ →
+      ∀ e ∈ c₁.pos ∩ c₂.neg, ∃ c₃ ∈ signedCircuits',
         c₃.pos ⊆ (c₁.pos ∪ c₂.pos) \ {e} ∧ c₃.neg ⊆ (c₁.neg ∪ c₂.neg) \ {e} )
 

@@ -11,7 +11,7 @@ class Matroid (E : Type _) : Type _ :=
     ∀ c', c' ∉ independents' → c' ⊆ c → c' = c))
   ( steinitz_exchange' : ∀ {B₁ B₂},
       B₁ ∈ bases' → B₂ ∈ bases' → ∀ {e : E},
-      e ∈ (B₁ \ B₂) → ∃ f ∈ B₂ \ B₁,
+      e ∈ B₁ \ B₂ → ∃ f ∈ B₂ \ B₁,
         (B₁ \ {e}) ∪ {f} ∈ bases' )
 
 namespace Matroid
@@ -29,7 +29,7 @@ theorem bases_nonempty (E : Type _) [Matroid E] : (bases E).Nonempty :=
 def circuits (E : Type _) [Matroid E] : Set (Set E) :=
   Matroid.circuits'
 
-/-- `independents` are subset of bases -/
+/-- `independents` are subsets of bases -/
 def independents (E : Type _) [Matroid E] : Set (Set E) :=
   Matroid.independents'
 
@@ -64,6 +64,11 @@ theorem mem_bases_iff_independents {b : Set E} : b ∈ bases E ↔
   . rintro ⟨⟨b', hb'⟩, h⟩
     rw [h b' ⟨b', hb'.1, refl _⟩ hb'.2]
     exact hb'.1
+
+theorem mem_circuits_iff_independents' {c : Set E} : c ∈ circuits E ↔
+    (c ∉ independents E ∧ ∀ (i), i ⊂ c → i ∈ independents E) := by
+  simp only [mem_circuits_iff_independents, @not_imp_comm (_ ∈ independents E), not_forall, exists_prop,
+    and_imp, ssubset_iff_subset_ne, ne_eq]
 
 theorem empty_mem_independents : ∅ ∈ independents E := by
   rcases bases_nonempty E with ⟨b, hb⟩
