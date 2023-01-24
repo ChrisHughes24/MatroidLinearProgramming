@@ -93,7 +93,8 @@ end SignedSet
 
 class OrientedMatroid (E : Type _) extends Matroid E :=
   ( signedCircuits' : Set (SignedSet E) )
-  ( circuits_eq_signedCircuits : ((↑) : SignedSet E → Set E) ⁻¹' circuits' = signedCircuits' )
+  ( circuits_eq_signedCircuits : 
+      ((↑) : SignedSet E → Set E) ⁻¹' circuits' = signedCircuits' )
   ( neg_mem : ∀ c, c ∈ signedCircuits' → -c ∈ signedCircuits' )
   ( subset : ∀ c₁ ∈ signedCircuits', ∀ c₂ ∈ signedCircuits', (c₁ : Set E) ⊆ c₂ →
     c₁ = c₂ ∨ c₁ = -c₂ )
