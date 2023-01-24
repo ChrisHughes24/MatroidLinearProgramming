@@ -1,7 +1,8 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.SetLike.Basic
+import Mathlib.Data.Fintype.Basic
 
-class Matroid (E : Type _) : Type _ :=
+class Matroid (E : Type _) extends Fintype E :=
   ( bases' : Set (Set E) )
   ( independents' : Set (Set E) )
   ( circuits' : Set (Set E))
