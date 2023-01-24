@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Lattice
 import Mathlib.Data.Fintype.Basic
 
 class Matroid (E : Type _) [DecidableEq E] extends Fintype E :=
@@ -81,7 +82,7 @@ theorem mem_independents_of_subFinset {i₁ i₂} (h : i₁ ⊆ i₂) (hi : i₂
 
 open Finset
 
-theorem basis_card_aux (b₁ b₂ : Finset E) (h₁ : b₁ ∈ bases E)
+private theorem basis_card_aux (b₁ b₂ : Finset E) (h₁ : b₁ ∈ bases E)
     (h₂ : b₂ ∈ bases E) (hlt : Finset.card b₂ < Finset.card b₁) : False := by
   have : (b₁ \ b₂).Nonempty := by
     by_contra h
@@ -94,14 +95,9 @@ theorem basis_card_aux (b₁ b₂ : Finset E) (h₁ : b₁ ∈ bases E)
     rw [card_sdiff, card_disjoint_union] <;> simp [hlt, hf.2, he.1]
   have _wf : card (((b₁ ∪ {f}) \ {e}) \ b₂) < card (b₁ \ b₂) := by
     apply card_lt_card
-    simp (config := { contextual := true }) only [mem_union, mem_singleton, ssubset_def, subset_iff,
-      mem_sdiff, not_false_iff, and_true, and_imp, true_or, true_and, not_forall, not_not, exists_prop,
-      exists_and_left]
-    constructor
-    . rintro g (hg | rfl) _ hgb
-      . exact hg
-      . exact (hgb hf.1).elim
-    . exact ⟨e, he.1, he.2, rfl⟩
+    simp only [mem_union, mem_singleton, ssubset_def, subset_iff, mem_sdiff, and_imp, not_forall, not_and,
+      not_not, exists_prop, exists_and_left]
+    aesop
   exact basis_card_aux _ _ hb h₂ this
 termination_by basis_card_aux b₁ b₂ _ _ _ => Finset.card (b₁ \ b₂)
 
